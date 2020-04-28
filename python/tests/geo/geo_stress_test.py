@@ -22,7 +22,7 @@ def test_ST_IsValid():
     arr = [geo for x in range(1, 10000001)]
     data = pandas.Series(arr)
     rst = arctern.ST_IsValid(arctern.ST_GeomFromText(data))
-    assert len(rst) == 1000000000
+    assert len(rst) == 10000000
 
 def test_ST_PrecisionReduce():
     geo = "POLYGON ((0 0,0 1,1 1,1 0,0 0))"
@@ -37,8 +37,8 @@ def test_st_intersection():
     arr1 = [geo1 for x in range(1, 10000001)]
     arr2 = [geo2 for x in range(1, 10000001)]
 
-    data1 = pandas.series(arr1)
-    data2 = pandas.series(arr2)
+    data1 = pandas.Series(arr1)
+    data2 = pandas.Series(arr2)
     rst = arctern.st_astext(arctern.st_intersection(arctern.st_geomfromtext(data1), arctern.st_geomfromtext(data2)))
     assert len(rst) == 10000000
 
@@ -317,7 +317,7 @@ def test_ST_Union_Aggr():
     arr = [geo for x in range(1, 10000001)]
     data = pandas.Series(arr)
     rst = arctern.ST_AsText(arctern.ST_Union_Aggr(arctern.ST_GeomFromText(data)))
-    assert len(rst) == 10000000
+    assert len(rst) == 1
 
 
 def test_ST_Envelope_Aggr():
@@ -325,4 +325,4 @@ def test_ST_Envelope_Aggr():
     arr = [geo for x in range(1, 10000001)]
     data = pandas.Series(arr)
     rst = arctern.ST_AsText(arctern.ST_Envelope_Aggr(arctern.ST_GeomFromText(data)))
-    assert len(rst) == 10000000
+    assert len(rst) == 1
