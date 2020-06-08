@@ -730,17 +730,11 @@ def test_abs():
     pass
 
 
-# @pytest.mark.skip("not support all")
-# def test_all(geo_s, pd_s):
-#     print(pd_s.all())
-#     geo_s.all()
+def test_all(geo_s, pd_s):
+    assert pd_s.all() == geo_s.all()
 
-
-# @pytest.mark.skip("not support any")
-# def test_any(geo_s, pd_s):
-#     pd_s.any()
-#     geo_s.any()
-
+#def test_any(geo_s, pd_s):
+    assert pd_s.any() == geo_s.any()
 
 @pytest.mark.skip("not support autocorr")
 def test_autocorrr():

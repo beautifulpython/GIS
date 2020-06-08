@@ -307,6 +307,16 @@ class GeoArray(ExtensionArray):
         """
         return self.data
 
+    def _reduce(self, name, skipna=True, **kwargs):
+        # including the base class version here (that raises by default)
+        if name == "any" or name == "all":
+            return getattr(self.data, name)()
+        raise TypeError(
+            "cannot perform {name} with type {dtype}".format(
+                name=name, dtype=self.dtype
+            )
+        )
+
     @classmethod
     def _concat_same_type(cls, to_concat):
         """
