@@ -1,4 +1,4 @@
-name: Scala Build
+name: SCALA-TEST
 
 # This workflow is triggered on pushes or pull request to the repository.
 on:
@@ -20,45 +20,13 @@ on:
       - '!ci/jenkins/**'
 
 jobs:
-  ubuntu:
-    name: AMD64 Ubuntu ${{ matrix.ubuntu }}
+  test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ubuntu: [18.04]
-    env:
-      UBUNTU: ${{ matrix.ubuntu }}
+
     steps:
-      # This step checks out a copy of your repository.
-      - name: Checkout Arctern
-        uses: actions/checkout@v1
-      - name: Docker Pull
-        shell: bash
+      - uses: actions/checkout@v1
+
+      - name: Run scala test
         run: |
-          docker-compose pull --ignore-pull-failures ubuntu-cpp
-      - name: Docker Build
-        shell: bash
-        run: |
-          docker-compose build ubuntu-cpp
-          docker rmi $(docker images | grep '<none>' | awk '{print $3}') || exit 0
-      - name: Docker Run
-        run: |
-          docker-compose run ubuntu-cpp
-      - name: Upload coverage to Codecov
-        if: success() && github.repository == 'zilliztech/arctern'
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./ci/scripts/output_new.info
-          name: amd64-linux-cpu-unittests
-          flags: amd64_linux_cpu_unittests
-          yml: ./codecov.yaml
-      - name: Docker Push
-        if: success() && github.event_name == 'push' && github.repository == 'zilliztech/arctern'
-        continue-on-error: true
-        shell: bash
-        run: |
-          docker login -u ${{ secrets.DOCKERHUB_USER }} \
-                       -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker-compose push ubuntu-cpp
+          docker build --tag scala-test:1804 . --file ./docker/scala/Dockerfile
+          docker run -v ${GITHUB_WORKSPACE}/scala:/scala scala-test:1804
