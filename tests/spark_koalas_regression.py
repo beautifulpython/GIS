@@ -53,113 +53,47 @@ def write_arr2csv(output_csv_path,output_arr):
         for x in output_arr : csv_writer.writerow ([x])
 
 
-def test_ST_IsValid():
-    input_csv_path = input_csv_base_dir + "isvalid.csv"
-    output_csv_path = output_csv_base_dir + "isvalid.out"
+def test_binary_func(input_csv,output_csv,func_name):
+    input_csv_path = input_csv_base_dir + input_csv
+    output_csv_path = output_csv_base_dir + output_csv
+    col1,col2 = read_csv2arr(input_csv_path)
+    assert len(col1) == len(col2)
+    geo_s1 = GeoSeries(col1)
+    geo_s2 = GeoSeries(col2)
+    test_codes = 'geo_s1.'+func_name+'(geo_s2)'
+    res = eval(test_codes)
+    write_arr2csv(output_csv_path,res.tolist())
+
+
+def test_unary_property_func(input_csv,output_csv,func_name):
+    input_csv_path = input_csv_base_dir + input_csv
+    output_csv_path = output_csv_base_dir + output_csv
     col1,col2 = read_csv2arr(input_csv_path)
     assert len(col2) == 0
-    geo_s = GeoSeries(col1)
-    res = geo_s.is_valid
-    write_arr2csv(output_csv_path,res.tolist())
-
-def test_ST_Intersects():
-    input_csv_path = input_csv_base_dir + "intersects.csv"
-    output_csv_path = output_csv_base_dir + "intersects.out"
-    col1,col2 = read_csv2arr(input_csv_path)
-    assert len(col1) == len(col2)
     geo_s1 = GeoSeries(col1)
-    geo_s2 = GeoSeries(col2)
-    res = geo_s1.intersects(geo_s2)
+    test_codes = 'geo_s1.'+func_name
+    res = eval(test_codes)
     write_arr2csv(output_csv_path,res.tolist())
 
 
-def test_ST_Intersection():
-    input_csv_path = input_csv_base_dir + "intersection.csv"
-    output_csv_path = output_csv_base_dir + "intersection.out"
+def test_unary_func(input_csv,output_csv,func_name,params=None):
+    input_csv_path = input_csv_base_dir + input_csv
+    output_csv_path = output_csv_base_dir + output_csv
     col1,col2 = read_csv2arr(input_csv_path)
-    assert len(col1) == len(col2)
+    assert len(col2) == 0
     geo_s1 = GeoSeries(col1)
-    geo_s2 = GeoSeries(col2)
-    res = geo_s1.intersection(geo_s2)
+    if params == None :
+        test_codes = 'geo_s1.'+func_name+'()'
+    else :
+        test_codes = 'geo_s1.'+func_name+'('+params+').to_wkt()'
+    res = eval(test_codes)
     write_arr2csv(output_csv_path,res.tolist())
+
+
+
+func_dict = {
+'is_valid':['isvalid.csv','isvalid.out'],
+
+}
 
 if __name__ == "__main__":
-
-# TODO : test koalas geoseries refer to old regression
-    url = 'local'
-    spark_session = SparkSession.builder.appName("Python zgis sample").master(url).getOrCreate()
-    spark_session.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
-
-    clear_result_dir('/tmp/results')
-    register_funcs(spark_session)
-
-    run_test_st_geomfromgeojson(spark_session)
-    run_test_st_geomfromgeojson2(spark_session)
-    run_test_st_curvetoline(spark_session)
-    run_test_st_point(spark_session)
-    run_test_envelope_aggr_1(spark_session)
-    run_test_envelope_aggr_curve(spark_session)
-    run_test_envelope_aggr_2(spark_session)
-    run_test_union_aggr_2(spark_session)
-    run_test_union_aggr_curve(spark_session)
-    run_test_st_isvalid_1(spark_session)
-    run_test_st_isvalid_curve(spark_session)
-    run_test_st_intersection(spark_session)
-    run_test_st_intersection_curve(spark_session)
-    run_test_st_convexhull(spark_session)
-    run_test_st_convexhull_curve(spark_session)
-    run_test_st_buffer(spark_session)
-    run_test_st_buffer1(spark_session)
-    run_test_st_buffer2(spark_session)
-    run_test_st_buffer3(spark_session)
-    run_test_st_buffer4(spark_session)
-    run_test_st_buffer5(spark_session)
-    run_test_st_buffer6(spark_session)
-    run_test_st_buffer_curve(spark_session)
-    run_test_st_buffer_curve1(spark_session)
-    run_test_st_envelope(spark_session)
-    run_test_st_envelope_curve(spark_session)
-    run_test_st_centroid(spark_session)
-    run_test_st_centroid_curve(spark_session)
-    run_test_st_length(spark_session)
-    run_test_st_length_curve(spark_session)
-    run_test_st_area(spark_session)
-    run_test_st_area_curve(spark_session)
-    run_test_st_distance(spark_session)
-    run_test_st_distance_curve(spark_session)
-    run_test_st_issimple(spark_session)
-    run_test_st_issimple_curve(spark_session)
-    run_test_st_npoints(spark_session)
-    run_test_st_geometrytype(spark_session)
-    run_test_st_geometrytype_curve(spark_session)
-    run_test_st_transform(spark_session)
-    run_test_st_transform1(spark_session)
-    run_test_st_intersects(spark_session)
-    run_test_st_intersects_curve(spark_session)
-    run_test_st_contains(spark_session)
-    run_test_st_contains_curve(spark_session)
-    run_test_st_within(spark_session)
-    run_test_st_within_curve(spark_session)
-    run_test_st_equals_1(spark_session)
-    run_test_st_equals_2(spark_session)
-    run_test_st_crosses(spark_session)
-    run_test_st_crosses_curve(spark_session)
-    run_test_st_overlaps(spark_session)
-    run_test_st_overlaps_curve(spark_session)
-    run_test_st_touches(spark_session)
-    run_test_st_touches_curve(spark_session)
-    run_test_st_makevalid(spark_session)
-    run_test_st_precisionreduce(spark_session)
-    run_test_st_polygonfromenvelope(spark_session)
-    run_test_st_simplifypreservetopology(spark_session)
-    run_test_st_simplifypreservetopology_curve(spark_session)
-    run_test_st_hausdorffdistance(spark_session)
-    run_test_st_hausdorffdistance_curve(spark_session)
-    run_test_st_pointfromtext(spark_session)
-    run_test_st_polygonfromtext(spark_session)
-    run_test_st_linestringfromtext(spark_session)
-    run_test_st_geomfromtext(spark_session)
-    run_test_st_geomfromwkt(spark_session)
-    run_test_st_astext(spark_session)
-
-    spark_session.stop()
